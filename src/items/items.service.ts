@@ -5,6 +5,8 @@ import { EntityManager, Repository } from 'typeorm';
 import { Item } from './entities/item.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Listing } from './entities/listing.entity';
+import { Comments } from './entities/comment.entity';
+import { Tag } from './entities/tag.entity';
 
 @Injectable()
 export class ItemsService {
@@ -19,9 +21,16 @@ export class ItemsService {
       ...createItemDto.listing,
       rating: 0,
     });
+
+    const tags = createItemDto.tags.map(
+      (createTagDto) => new Tag(createTagDto),
+    );
+
     const item = new Item({
       ...createItemDto,
       listing,
+      comments: [],
+      tags,
     });
 
     await this.entityManager.save(item);
@@ -38,6 +47,7 @@ export class ItemsService {
       },
       relations: {
         listing: true,
+        comments: true,
       },
     });
   }
@@ -47,6 +57,13 @@ export class ItemsService {
       id: id,
     });
     item.public = updateItemDto.public;
+
+    const comments = updateItemDto.comments.map(
+      (createCommentDto) => new Comments(createCommentDto),
+    );
+
+    item.comments = comments;
+
     await this.entityManager.save(item);
 
     return `This action updates a #${id} item`;

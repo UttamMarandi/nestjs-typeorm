@@ -3,7 +3,7 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { Item } from './item.entity';
 
 @Entity()
-export class Comments extends AbstractEntity<Comment> {
+export class Comments extends AbstractEntity<Comments> {
   @Column()
   content: string;
 
